@@ -105,7 +105,7 @@ export default class MainScene extends Scene {
     this.gameLayer.add(this.player);
   }
 
-  update(time: number, delta: number): void {
+  update(time: number, _delta: number): void {
     this.player?.move();
 
     this.background?.setTilePosition(0, this.background.tilePositionY - 1);
