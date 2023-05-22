@@ -86,16 +86,16 @@ export default class MainScene extends Scene {
     this.physics.add.overlap(
       this.player,
       this.gemsGroup,
-      this.collectGem,
-      null,
+      this.collectGem as Phaser.Types.Physics.Arcade.ArcadePhysicsCallback,
+      undefined,
       this
     );
 
     this.physics.add.overlap(
       this.player,
       this.obstaclesGroup,
-      this.collideObstacle,
-      null,
+      this.collideObstacle as Phaser.Types.Physics.Arcade.ArcadePhysicsCallback,
+      undefined,
       this
     );
 
