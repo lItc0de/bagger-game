@@ -1,77 +1,77 @@
-import { type Scene } from 'phaser';
+import Phaser from 'phaser';
+import gameConfig from '../game-config';
 
-export default class Player {
-  private readonly sprite: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
+export default class Player extends Phaser.Physics.Arcade.Sprite {
   private readonly cursors: Phaser.Types.Input.Keyboard.CursorKeys;
-  private readonly scene: Scene;
-  private readonly texture: string;
 
   constructor(
-    scene: Scene,
+    scene: Phaser.Scene,
     x: number,
     y: number,
-    texture: string,
+    playerConfig: typeof gameConfig.player,
     cursors: Phaser.Types.Input.Keyboard.CursorKeys
   ) {
-    this.scene = scene;
+    super(scene, x, y, playerConfig.key);
+    scene.add.existing(this);
+    scene.physics.world.enableBody(this);
+
     this.cursors = cursors;
-    this.texture = texture;
 
-    this.sprite = scene.physics.add.sprite(x, y, texture);
-
-    this.initialize();
+    this.setCollideWorldBounds(true);
+    this.scale = 0.2;
     this.addAnims();
   }
 
-  initialize(): void {
-    this.sprite.setCollideWorldBounds(true);
-  }
-
-  update(): void {
+  move(): void {
     if (this.cursors.left.isDown) {
-      this.sprite.setVelocityX(-160);
+      this.setVelocityX(-160);
 
-      this.sprite.anims.play('left', true);
+      this.anims.play('left', true);
     } else if (this.cursors.right.isDown) {
-      this.sprite.setVelocityX(160);
+      this.setVelocityX(160);
 
-      this.sprite.anims.play('right', true);
+      this.anims.play('right', true);
     } else {
-      this.sprite.setVelocityX(0);
+      this.setVelocityX(0);
 
-      this.sprite.anims.play('turn');
+      this.anims.play('turn', true);
     }
   }
 
   addAnims(): void {
-    this.scene.anims.create({
-      key: 'left',
-      frames: this.scene.anims.generateFrameNumbers(this.texture, {
-        start: 0,
-        end: 3,
-      }),
-      frameRate: 10,
-      repeat: -1,
-    });
+    if (!this.scene.anims.exists('left')) {
+      this.scene.anims.create({
+        key: 'left',
+        frames: this.scene.anims.generateFrameNumbers(gameConfig.player.key, {
+          start: 0,
+          end: 1,
+        }),
+        frameRate: 10,
+        repeat: -1,
+      });
+    }
 
-    this.scene.anims.create({
-      key: 'turn',
-      frames: [{ key: this.texture, frame: 4 }],
-      frameRate: 20,
-    });
+    if (!this.scene.anims.exists('turn')) {
+      this.scene.anims.create({
+        key: 'turn',
+        frames: this.scene.anims.generateFrameNumbers(gameConfig.player.key, {
+          start: 2,
+          end: 3,
+        }),
+        frameRate: 10,
+      });
+    }
 
-    this.scene.anims.create({
-      key: 'right',
-      frames: this.scene.anims.generateFrameNumbers(this.texture, {
-        start: 5,
-        end: 8,
-      }),
-      frameRate: 10,
-      repeat: -1,
-    });
-  }
-
-  get display(): Phaser.Physics.Arcade.Sprite {
-    return this.sprite;
+    if (!this.scene.anims.exists('right')) {
+      this.scene.anims.create({
+        key: 'right',
+        frames: this.scene.anims.generateFrameNumbers(gameConfig.player.key, {
+          start: 2,
+          end: 3,
+        }),
+        frameRate: 10,
+        repeat: -1,
+      });
+    }
   }
 }
