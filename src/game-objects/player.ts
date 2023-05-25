@@ -9,7 +9,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     x: number,
     y: number,
     playerConfig: typeof gameConfig.player,
-    cursors: Phaser.Types.Input.Keyboard.CursorKeys
+    cursors: Phaser.Types.Input.Keyboard.CursorKeys,
   ) {
     super(scene, x, y, playerConfig.key);
     scene.add.existing(this);
@@ -20,19 +20,14 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.setCollideWorldBounds(true);
     this.scale = 0.2;
     this.addAnims();
-    this.addDeviceOrientationMovement();
   }
 
-  // destroy(): void {
-  //   window.removeEventListener('deviceorientation', this.handleOrientation);
-  // }
-
-  move(): void {
-    if (this.cursors.left.isDown) {
+  move(deviceOrientationGamma: number): void {
+    if (this.cursors.left.isDown || deviceOrientationGamma < -5) {
       this.setVelocityX(-160);
 
       this.anims.play('left', true);
-    } else if (this.cursors.right.isDown) {
+    } else if (this.cursors.right.isDown || deviceOrientationGamma > 5) {
       this.setVelocityX(160);
 
       this.anims.play('right', true);
@@ -80,17 +75,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     }
   }
 
-  addDeviceOrientationMovement(): void {
-    window.addEventListener('deviceorientation', this.handleOrientation, true);
-  }
-
-  handleOrientation = (e: DeviceOrientationEvent): void => {
-    const x = e.gamma;
-    const y = e.beta;
-
-    if (x === null || y === null) return;
-
-    this.setVelocityX(x);
-    this.setVelocityY(y);
+  get velocityX(): number {
+    return this.body?.velocity.x == null ? 0 : this.body?.velocity.x;
   }
 }

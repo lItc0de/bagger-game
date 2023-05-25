@@ -1,12 +1,19 @@
 import { Scene } from 'phaser';
+import { initDeviceOrientation } from '../utils/deviceOrientation';
 
 export class LoadingScene extends Scene {
+  private button: HTMLButtonElement | null = null;
+
   constructor() {
     super('loading-scene');
   }
 
   create(): void {
-    console.log('hello loading');
+    this.button = document.getElementById(
+      'allowDeviceOrientation'
+    ) as HTMLButtonElement;
+
+    this.button?.addEventListener('click', this.handleButtonClick);
 
     const loadingText = this.make.text({
       x: window.innerWidth / 2,
@@ -20,15 +27,10 @@ export class LoadingScene extends Scene {
     loadingText.setOrigin(0.5, 0.5);
 
     const startButton = this.add
-      .text(
-        this.cameras.main.centerX,
-        this.cameras.main.centerY,
-        'Start',
-        {
-          font: '20px monospace',
-          color: '#ffffff',
-        }
-      )
+      .text(this.cameras.main.centerX, this.cameras.main.centerY, 'Start', {
+        font: '20px monospace',
+        color: '#ffffff',
+      })
       .setOrigin(0.5)
       .setPadding(10)
       .setStyle({ backgroundColor: '#111' })
@@ -39,6 +41,19 @@ export class LoadingScene extends Scene {
   }
 
   startGame(): void {
-    this.scene.start('main-scene');
+    this.button?.click();
   }
+
+  handleButtonClick = (): void => {
+    this.button?.removeEventListener('click', this.handleButtonClick);
+    this.button?.remove();
+
+    initDeviceOrientation()
+      .then(() => {
+        this.scene.start('main-scene');
+      })
+      .catch(() => {
+        console.error('Device orientation error');
+      });
+  };
 }

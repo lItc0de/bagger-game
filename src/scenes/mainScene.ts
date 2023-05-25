@@ -12,6 +12,7 @@ export default class MainScene extends Scene {
   private hearts = 3;
   private obstacleSpawnTime = 0;
   private gemSpawnTime = 0;
+  private deviceOrientationGamma = 0;
 
   private infoLayer: Phaser.GameObjects.Layer | undefined;
   private gameLayer: Phaser.GameObjects.Layer | undefined;
@@ -23,6 +24,7 @@ export default class MainScene extends Scene {
   private gemsGroup: GemsGroup | undefined;
 
   private cursors: Phaser.Types.Input.Keyboard.CursorKeys | undefined;
+
 
   constructor() {
     super('main-scene');
@@ -43,6 +45,8 @@ export default class MainScene extends Scene {
     gameConfig.obstacles.forEach(obstacle => {
       this.load.image(obstacle.key, obstacle.texture);
     })
+
+    this.addDeviceOrientation();
   }
 
 
@@ -106,7 +110,7 @@ export default class MainScene extends Scene {
   }
 
   update(time: number, _delta: number): void {
-    this.player?.move();
+    this.player?.move(this.deviceOrientationGamma);
 
     this.background?.setTilePosition(0, this.background.tilePositionY - 1);
 
@@ -145,5 +149,15 @@ export default class MainScene extends Scene {
     this.score += obstacle.config.score;
     this.hearts += obstacle.config.hearts;
     this.scoreText?.setText(`Score: ${this.score} | Hearts: ${this.hearts}`);
+  }
+
+  addDeviceOrientation(): void {
+    window.addEventListener('deviceorientation', this.handleOrientation, true);
+  }
+
+  handleOrientation = (e: DeviceOrientationEvent): void => {
+    if (e.gamma == null) return;
+
+    this.deviceOrientationGamma = e.gamma;
   }
 }
