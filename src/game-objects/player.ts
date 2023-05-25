@@ -20,7 +20,12 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.setCollideWorldBounds(true);
     this.scale = 0.2;
     this.addAnims();
+    this.addDeviceOrientationMovement();
   }
+
+  // destroy(): void {
+  //   window.removeEventListener('deviceorientation', this.handleOrientation);
+  // }
 
   move(): void {
     if (this.cursors.left.isDown) {
@@ -73,5 +78,19 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         repeat: -1,
       });
     }
+  }
+
+  addDeviceOrientationMovement(): void {
+    window.addEventListener('deviceorientation', this.handleOrientation, true);
+  }
+
+  handleOrientation = (e: DeviceOrientationEvent): void => {
+    const x = e.gamma;
+    const y = e.beta;
+
+    if (x === null || y === null) return;
+
+    this.setVelocityX(x);
+    this.setVelocityY(y);
   }
 }
