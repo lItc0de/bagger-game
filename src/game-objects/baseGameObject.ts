@@ -14,6 +14,8 @@ export default class BaseGameObject extends Phaser.Physics.Arcade.Sprite {
     this.config = config;
 
     scene.physics.world.enableBody(this);
+
+    this.body?.setSize(this.body.width - 30, this.body.height - 30, true);
   }
 
   addedToScene(): void {

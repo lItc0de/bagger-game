@@ -20,6 +20,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.setCollideWorldBounds(true);
     this.scale = 0.2;
     this.addAnims();
+    this.body?.setSize(gameConfig.player.frameWidth - 200, gameConfig.player.frameHeight - 1000, true);
+    this.body?.setOffset(100, 400);
   }
 
   move(deviceOrientationGamma: number): void {

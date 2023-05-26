@@ -74,7 +74,7 @@ export default class MainScene extends Scene {
     if (this.cursors == null) return;
 
     const x = window.innerWidth / 2;
-    const y = window.innerHeight - 100;
+    const y = window.innerHeight - 200;
 
     this.player = new Player(this, x, y, gameConfig.player, this.cursors);
 
